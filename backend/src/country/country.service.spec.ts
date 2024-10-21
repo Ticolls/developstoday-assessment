@@ -21,7 +21,8 @@ describe('CountryService', () => {
         {
           provide: HttpService,
           useValue: {
-            get: jest.fn(), 
+            get: jest.fn(),
+            post: jest.fn(),
           },
         },
       ],
@@ -42,7 +43,7 @@ describe('CountryService', () => {
       statusText: 'OK',
       headers: new AxiosHeaders(),
       config: {
-        headers: new AxiosHeaders()
+        headers: new AxiosHeaders(),
       },
     };
 
@@ -55,5 +56,96 @@ describe('CountryService', () => {
     );
 
     expect(result).toEqual(mockCountries);
+  });
+
+  it('should fetch country info successfully', async () => {
+    const mockCountryInfoResponse: AxiosResponse = {
+      data: {
+        commonName: 'Brazil',
+        borders: ['Argentina', 'Paraguay'],
+      },
+      status: 200,
+      statusText: 'OK',
+      headers: new AxiosHeaders(),
+      config: {
+        headers: new AxiosHeaders(),
+      },
+    };
+
+    const mockIsoDataResponse: AxiosResponse = {
+      data: {
+        data: {
+          Iso3: 'BRA',
+          Iso2: 'BR',
+        },
+      },
+      status: 200,
+      statusText: 'OK',
+      headers: new AxiosHeaders(),
+      config: {
+        headers: new AxiosHeaders(),
+      },
+    };
+
+    const mockPopulationResponse: AxiosResponse = {
+      data: {
+        data: {
+          populationCounts: [
+            { year: 2000, value: 170000000 },
+            { year: 2010, value: 190000000 },
+          ],
+        },
+      },
+      status: 200,
+      statusText: 'OK',
+      headers: new AxiosHeaders(),
+      config: {
+        headers: new AxiosHeaders(),
+      },
+    };
+
+    const mockFlagResponse: AxiosResponse = {
+      data: {
+        data: {
+          flag: 'https://some-flag-url.com/br.png',
+        },
+      },
+      status: 200,
+      statusText: 'OK',
+      headers: new AxiosHeaders(),
+      config: {
+        headers: new AxiosHeaders(),
+      },
+    };
+    jest.spyOn(httpService, 'get').mockReturnValue(of(mockCountryInfoResponse));
+    jest
+      .spyOn(httpService, 'post')
+      .mockReturnValueOnce(of(mockIsoDataResponse))
+      .mockReturnValueOnce(of(mockPopulationResponse))
+      .mockReturnValueOnce(of(mockFlagResponse));
+
+    const result = await service.getCountryInfo('BR');
+
+    expect(result).toEqual({
+      borders: mockCountryInfoResponse.data.borders,
+      populationHistory: mockPopulationResponse.data.data.populationCounts,
+      flagUrl: mockFlagResponse.data.data.flag,
+    });
+
+    expect(httpService.get).toHaveBeenCalledWith(
+      'https://date.nager.at/api/v3/CountryInfo/BR',
+    );
+    expect(httpService.post).toHaveBeenCalledWith(
+      'https://countriesnow.space/api/v0.1/countries/iso',
+      { country: 'Brazil' },
+    );
+    expect(httpService.post).toHaveBeenCalledWith(
+      'https://countriesnow.space/api/v0.1/countries/population',
+      { iso3: 'BRA' },
+    );
+    expect(httpService.post).toHaveBeenCalledWith(
+      'https://countriesnow.space/api/v0.1/countries/flag/images',
+      { iso2: 'BR' },
+    );
   });
 });
