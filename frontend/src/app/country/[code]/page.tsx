@@ -22,6 +22,7 @@ type PopulationData = {
 };
 
 type CountryInfo = {
+  name: string;
   borders: BorderCountry[];
   populationHistory: PopulationData[];
   flagUrl: string;
@@ -83,7 +84,7 @@ export default function CountryInfo({ params }: { params: { code: string } }) {
 
       <div className="flex items-center mb-6">
         <Image src={countryInfo.flagUrl} width={50} height={50} alt="Country flag" className="w-20 h-12 mr-4" />
-        <h2 className="text-2xl font-semibold">{params.code}</h2>
+        <h2 className="text-2xl font-semibold">{countryInfo.name}</h2>
       </div>
 
       <div className="mb-6">
