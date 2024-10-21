@@ -4,6 +4,9 @@ import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 import { AxiosHeaders, AxiosResponse } from 'axios';
 
+const nagerUrl = process.env.NAGER_URL
+const countriesnowUrl = process.env.COUNTRIESNOW_URL
+
 describe('CountryService', () => {
   let service: CountryService;
   let httpService: HttpService;
@@ -52,7 +55,7 @@ describe('CountryService', () => {
     const result = await service.getAvailableCountries();
 
     expect(httpService.get).toHaveBeenCalledWith(
-      'https://date.nager.at/api/v3/AvailableCountries',
+      `${nagerUrl}/AvailableCountries`,
     );
 
     expect(result).toEqual(mockCountries);
@@ -133,18 +136,18 @@ describe('CountryService', () => {
     });
 
     expect(httpService.get).toHaveBeenCalledWith(
-      'https://date.nager.at/api/v3/CountryInfo/BR',
+      `${nagerUrl}/CountryInfo/BR`,
     );
     expect(httpService.post).toHaveBeenCalledWith(
-      'https://countriesnow.space/api/v0.1/countries/iso',
+      `${countriesnowUrl}/countries/iso`,
       { country: 'Brazil' },
     );
     expect(httpService.post).toHaveBeenCalledWith(
-      'https://countriesnow.space/api/v0.1/countries/population',
+      `${countriesnowUrl}/countries/population`,
       { iso3: 'BRA' },
     );
     expect(httpService.post).toHaveBeenCalledWith(
-      'https://countriesnow.space/api/v0.1/countries/flag/images',
+      `${countriesnowUrl}/countries/flag/images`,
       { iso2: 'BR' },
     );
   });
