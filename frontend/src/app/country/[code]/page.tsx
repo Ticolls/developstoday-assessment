@@ -5,6 +5,7 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { getCountry } from '@/app/services/api';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation'; 
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -31,6 +32,7 @@ type CountryInfo = {
 export default function CountryInfo({ params }: { params: { code: string } }) {
   const [countryInfo, setCountryInfo] = useState<CountryInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchCountry() {
@@ -51,14 +53,23 @@ export default function CountryInfo({ params }: { params: { code: string } }) {
     return (
     <div className="flex items-center justify-center h-screen">
       <div className="text-2xl font-semibold">Loading...</div>
+      
     </div>
     )
   }
 
   if (!countryInfo) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen container mx-auto px-4 py-8 relative">
         <div className="text-2xl font-semibold">Country information not found</div>
+        <button
+        onClick={() => router.push('/')} 
+        className="absolute top-4 right-4 p-2 bg-black text-white rounded-full hover:bg-gray-800 transition"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
       </div>
       )
   }
@@ -79,7 +90,16 @@ export default function CountryInfo({ params }: { params: { code: string } }) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 relative">
+      <button
+        onClick={() => router.push('/')} 
+        className="absolute top-4 right-4 p-2 bg-black text-white rounded-full hover:bg-gray-800 transition"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
       <h1 className="text-3xl font-bold mb-4">Country Info</h1>
 
       <div className="flex items-center mb-6">
